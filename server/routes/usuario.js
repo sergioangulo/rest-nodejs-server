@@ -131,19 +131,32 @@ app.get('/serviceActivationAndConfiguration/service/:msisdn', function(req, res)
             code: 1,
             reason: "MSISDN missing"
         });
+    } else if (msisdn.length != 11) {
+        return res.status(400).json({
+            code: 1,
+            reason: "MSISDN must have 11 digits."
+        });
     }
-    let ota = new OtaRefresh({
-        msisdn: msisdn,
-        date: undefined
-    });
-    let query = ota.find({ 'msisdn': msisdn });
+
+    let query = OtaRefresh.find({ 'msisdn': msisdn });
     query.sort({ date: -1 });
     query.select('date');
-    query.exec(function(err, res) {
-        if (err) return handleError(err);
-        console.log(res); // athletes contains an ordered list of 5 athletes who play Tennis
-    })
-    console.log(res);
+    query.limit(1);
+    query.exec((err, response) => {
+        if (err) {
+            return handleError(err);
+        }
+        console.log(response);
+        let otarefreshDate = null;
+        if (typeof response[0] != "undefined") {
+            otarefreshDate = new Date(response[0].date);
+        }
+        return res.json({
+            state: "active",
+            lastOtaRefresh: otarefreshDate
+        })
+    });
+
 });
 
 module.exports = app;
