@@ -7,7 +7,8 @@ const app = express();
 const port = process.env.PORT;
 
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: false })); // use => middleware
+//app.use(bodyParser.urlencoded({ extended: false })); // use => middleware
+app.use(bodyParser.json());
 app.use(require('./routes/usuario'));
 
 
@@ -33,10 +34,6 @@ client.connect(err => {
   // perform actions on the collection object
   client.close();
 });
-
-
-
-
 
 */
 
